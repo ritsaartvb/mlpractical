@@ -161,7 +161,7 @@ class ExperimentBuilder(nn.Module):
 
 
         
-       """ plt.bar(range(len(all_grads)), all_grads, alpha=0.7, lw=1, color='c')
+        """ plt.bar(range(len(all_grads)), all_grads, alpha=0.7, lw=1, color='c')
         plt.hlines(0, 0, len(all_grads)+1, lw=2, color='navy')
         plt.xticks(range(0, len(all_grads), 1), layers, rotation='vertical')
         plt.xlim(left=0, right=len(all_grads))
