@@ -154,23 +154,15 @@ class ExperimentBuilder(nn.Module):
         Complete the code in the block below to collect absolute mean of the gradients for each layer in all_grads with the             layer names in layers.
         """
         ########################################
-        for n, p in named_parameters:
-            if(p.requires_grad) and ("bias" not in n):
+        ffor n, p in named_parameters:
+            if (p.requires_grad) and ("bias" not in n):
                 layers.append(n)
-                all_grads.append(p.grad.abs().mean())
-
-
-        
-        """ plt.bar(range(len(all_grads)), all_grads, alpha=0.7, lw=1, color='c')
-        plt.hlines(0, 0, len(all_grads)+1, lw=2, color='navy')
-        plt.xticks(range(0, len(all_grads), 1), layers, rotation='vertical')
-        plt.xlim(left=0, right=len(all_grads))
-        plt.ylim(bottom=torch.min(torch.stack(all_grads)).item(), top=torch.max(torch.stack(all_grads)).item()) 
-        plt.xlabel('Layers')
-        plt.ylabel('Average Gradient')
-        plt.title('Gradient flow')
-        plt.grid(True)
-        plt.show( hello)"""
+                # Move gradients to CPU memory before calculating mean
+                if p.grad is not None:
+                    all_grads.append(p.grad.abs().mean().cpu())
+                else:
+                    # Handle the case where some parameters might not have gradients
+                    all_grads.append(torch.tensor(0))
         
         
         ########################################
@@ -179,6 +171,9 @@ class ExperimentBuilder(nn.Module):
         plt = self.plot_func_def(all_grads, layers)
         
         return plt
+
+        
+
     
     
     
