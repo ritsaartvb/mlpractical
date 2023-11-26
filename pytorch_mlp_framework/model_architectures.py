@@ -338,3 +338,190 @@ class ConvolutionalNetwork(nn.Module):
                 pass
 
         self.logit_linear_layer.reset_parameters()
+
+
+
+
+
+
+class BNConvolutionalProcessingBlock(nn.Module):
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
+        super(BNConvolutionalProcessingBlock, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = bias
+        self.dilation = dilation
+
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        # First convolutional layer
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, 
+                                              kernel_size=self.kernel_size, dilation=self.dilation, 
+                                              padding=self.padding, stride=1, bias=self.bias)
+        # Batch normalization after the first convolutional layer
+        self.layer_dict['bn_0'] = nn.BatchNorm2d(self.num_filters)
+
+        out = self.layer_dict['conv_0'].forward(out)
+        out = self.layer_dict['bn_0'].forward(out)
+        out = F.leaky_relu(out)
+
+        # Second convolutional layer
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, 
+                                              kernel_size=self.kernel_size, dilation=self.dilation, 
+                                              padding=self.padding, stride=1, bias=self.bias)
+        # Batch normalization after the second convolutional layer
+        self.layer_dict['bn_1'] = nn.BatchNorm2d(self.num_filters)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        out = self.layer_dict['bn_1'].forward(out)
+        out = F.leaky_relu(out)
+
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        out = self.layer_dict['conv_0'].forward(out)
+        out = self.layer_dict['bn_0'].forward(out)
+        out = F.leaky_relu(out)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        out = self.layer_dict['bn_1'].forward(out)
+        out = F.leaky_relu(out)
+
+        return out
+
+class BNConvolutionalDimensionalityReductionBlock(nn.Module):
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation, reduction_factor):
+        super(BNConvolutionalDimensionalityReductionBlock, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = bias
+        self.dilation = dilation
+        self.reduction_factor = reduction_factor
+
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        # First convolutional layer
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, 
+                                              kernel_size=self.kernel_size, dilation=self.dilation, 
+                                              padding=self.padding, stride=1, bias=self.bias)
+        # Batch normalization after the first convolutional layer
+        self.layer_dict['bn_0'] = nn.BatchNorm2d(self.num_filters)
+
+        out = self.layer_dict['conv_0'].forward(out)
+        out = self.layer_dict['bn_0'].forward(out)
+        out = F.leaky_relu(out)
+
+        # Second convolutional layer
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, 
+                                              kernel_size=self.kernel_size, dilation=self.dilation, 
+                                              padding=self.padding, stride=1, bias=self.bias)
+        # Batch normalization after the second convolutional layer
+        self.layer_dict['bn_1'] = nn.BatchNorm2d(self.num_filters)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        out = self.layer_dict['bn_1'].forward(out)
+        out = F.leaky_relu(out)
+
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        out = self.layer_dict['conv_0'](out)
+        out = self.layer_dict['bn_0'](out)
+        out = F.leaky_relu(out)
+
+        # Apply average pooling for dimensionality reduction
+        out = F.avg_pool2d(out, self.reduction_factor)
+
+        out = self.layer_dict['conv_1'](out)
+        out = self.layer_dict['bn_1'](out)
+        out = F.leaky_relu(out)
+
+        return out
+
+
+
+
+
+class BNRCConvolutionalProcessingBlock(nn.Module):
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
+        super(BNRCConvolutionalProcessingBlock, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = bias
+        self.dilation = dilation
+
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        # Dummy tensor to determine the input channels for the first convolutional layer
+        x = torch.zeros(self.input_shape)
+
+        self.layer_dict['residual_conv'] = nn.Conv2d(in_channels=x.shape[1], 
+                                                     out_channels=self.num_filters, 
+                                                     kernel_size=1, 
+                                                     stride=1, 
+                                                     padding=0, 
+                                                     bias=False)
+
+        # First convolutional layer
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=x.shape[1], 
+                                              out_channels=self.num_filters, 
+                                              kernel_size=self.kernel_size, 
+                                              dilation=self.dilation, 
+                                              padding=self.padding, 
+                                              stride=1, 
+                                              bias=self.bias)
+        # Batch normalization after the first convolutional layer
+        self.layer_dict['bn_0'] = nn.BatchNorm2d(self.num_filters)
+
+        # Second convolutional layer
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=self.num_filters, 
+                                              out_channels=self.num_filters, 
+                                              kernel_size=self.kernel_size, 
+                                              dilation=self.dilation, 
+                                              padding=self.padding, 
+                                              stride=1, 
+                                              bias=self.bias)
+        # Batch normalization after the second convolutional layer
+        self.layer_dict['bn_1'] = nn.BatchNorm2d(self.num_filters)
+
+    def forward(self, x):
+        identity = self.layer_dict['residual_conv'](x)  # Adjust channels in the residual path
+        
+
+        out = self.layer_dict['conv_0'](x)
+        out = self.layer_dict['bn_0'](out)
+        out = F.leaky_relu(out)
+
+        out = self.layer_dict['conv_1'](out)
+        out = self.layer_dict['bn_1'](out)
+        
+        # Apply the residual connection before the final activation function of the block
+        out += identity
+        out = F.leaky_relu(out)  # Final activation after residual connection
+
+        return out

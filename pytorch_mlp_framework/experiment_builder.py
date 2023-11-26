@@ -155,7 +155,7 @@ class ExperimentBuilder(nn.Module):
         """
         ########################################
         for n, p in named_parameters:
-            if (p.requires_grad) and ("bias" not in n):
+            if (p.requires_grad) and ("weight" in n):
                 layers.append(n)
                 # Move gradients to CPU memory before calculating mean
                 if p.grad is not None:
@@ -311,7 +311,7 @@ class ExperimentBuilder(nn.Module):
             plt = self.plot_grad_flow(self.model.named_parameters())
             if not os.path.exists(os.path.join(self.experiment_saved_models, 'gradient_flow_plots')):
                 os.mkdir(os.path.join(self.experiment_saved_models, 'gradient_flow_plots'))
-                # plt.legend(loc="best")
+                plt.legend(loc="best")
             plt.savefig(os.path.join(self.experiment_saved_models, 'gradient_flow_plots', "epoch{}.pdf".format(str(epoch_idx))))
             ################################################################
         
