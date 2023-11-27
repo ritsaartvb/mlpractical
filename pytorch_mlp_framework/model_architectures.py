@@ -429,6 +429,10 @@ class BNConvolutionalDimensionalityReductionBlock(nn.Module):
         out = self.layer_dict['bn_0'].forward(out)
         out = F.leaky_relu(out)
 
+        #out = F.avg_pool2d(out, self.reduction_factor)
+        print("out shape after avg pool:", out.shape)
+
+
         # Second convolutional layer
         self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, 
                                               kernel_size=self.kernel_size, dilation=self.dilation, 
