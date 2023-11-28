@@ -157,8 +157,15 @@ class ExperimentBuilder(nn.Module):
         Complete the code in the block below to collect absolute mean of the gradients for each layer in all_grads with the             layer names in layers.
         """
         ########################################
+        substrings_to_remove = ['layer_dict.', '.weight']
         for n, p in named_parameters:
             if (p.requires_grad) and ("weight" in n):
+                # Remove unnesassary substrings from layer names
+                for substring in substrings_to_remove:
+                    n = n.replace(substring, '')
+
+        # Replace any remaining '.' with '_'
+        modified_string = original_string.replace('.', '_')
                 layers.append(n)
                 # Move gradients to CPU memory before calculating mean
                 if p.grad is not None:
@@ -169,13 +176,8 @@ class ExperimentBuilder(nn.Module):
         
         
 
-        # Remove unnesassary substrings from layer names
-        substrings_to_remove = ['layer_dict.', '.weight']
-        for substring in substrings_to_remove:
-            original_string = original_string.replace(substring, '')
-
-        # Replace any remaining '.' with '_'
-        modified_string = original_string.replace('.', '_')
+        
+        
         
         
         ########################################
