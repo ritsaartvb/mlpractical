@@ -160,13 +160,13 @@ class ExperimentBuilder(nn.Module):
         substrings_to_remove = ['layer_dict.', '.weight']
         for n, p in named_parameters:
             if (p.requires_grad) and ("weight" in n):
-                # Remove unnesassary substrings from layer names
+                
                 for substring in substrings_to_remove:
                     n = n.replace(substring, '')
 
-        # Replace any remaining '.' with '_'
-        modified_string = original_string.replace('.', '_')
-                layers.append(n)
+                # Replace any remaining '.' with '_'
+                modified_string = n.replace('.', '_')
+                layers.append(modified_string)
                 # Move gradients to CPU memory before calculating mean
                 if p.grad is not None:
                     all_grads.append(p.grad.abs().mean().cpu())
@@ -176,7 +176,7 @@ class ExperimentBuilder(nn.Module):
         
         
 
-        
+        # Remove unnesassary substrings from layer names
         
         
         
