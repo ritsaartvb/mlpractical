@@ -128,6 +128,8 @@ class ExperimentBuilder(nn.Module):
         :param layers: Layer names corresponding to the model parameters
         :return: plot for gradient flow
         """
+        
+        plt.figure(figsize=(10, 5))  # Set the figure size to match gradplot_38
         plt.plot(all_grads, alpha=0.3, color="b")
         plt.hlines(0, 0, len(all_grads)+1, linewidth=1, color="k" )
         plt.xticks(range(0,len(all_grads), 1), layers, rotation="vertical")
@@ -138,6 +140,7 @@ class ExperimentBuilder(nn.Module):
         plt.grid(True)
         plt.tight_layout()
         
+
         return plt
         
     
@@ -163,6 +166,16 @@ class ExperimentBuilder(nn.Module):
                 else:
                     # Handle the case where some parameters might not have gradients
                     all_grads.append(torch.tensor(0))
+        
+        
+
+        # Remove unnesassary substrings from layer names
+        substrings_to_remove = ['layer_dict.', '.weight']
+        for substring in substrings_to_remove:
+            original_string = original_string.replace(substring, '')
+
+        # Replace any remaining '.' with '_'
+        modified_string = original_string.replace('.', '_')
         
         
         ########################################
