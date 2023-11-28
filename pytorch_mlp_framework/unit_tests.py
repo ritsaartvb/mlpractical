@@ -28,7 +28,7 @@ class TestBlocks(unittest.TestCase):
 
         # Initialize the block
         block = BNRCConvolutionalProcessingBlock(input_shape=input_tensor.shape, 
-                                                     num_filters=16, 
+                                                     num_filters=3, 
                                                      kernel_size=3, 
                                                      padding=1, 
                                                      bias=False, 
@@ -38,7 +38,7 @@ class TestBlocks(unittest.TestCase):
         output = block(input_tensor)
 
         # Check if output has the right shape
-        self.assertEqual(output.shape, torch.Size([1, 16, 64, 64]))  # The expected output shape
+        self.assertEqual(output.shape, torch.Size([1, 3, 64, 64]))  # The expected output shape
 
     def test_BNConvolutionalDimensionalityReductionBlock(self):
         # Create a test input tensor

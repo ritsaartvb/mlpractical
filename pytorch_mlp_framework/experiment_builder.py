@@ -126,10 +126,10 @@ class ExperimentBuilder(nn.Module):
         Plot function definition to plot the average gradient with respect to the number of layers in the given model
         :param all_grads: Gradients wrt weights for each layer in the model.
         :param layers: Layer names corresponding to the model parameters
-        :return: plot for gradient flow
+        :return: plot for gradient flowd
         """
         
-        plt.figure(figsize=(10, 5))  # Set the figure size to match gradplot_38
+        plt.figure(figsize=(8, 6))  # Set the figure size to match gradplot_38
         plt.plot(all_grads, alpha=0.3, color="b")
         plt.hlines(0, 0, len(all_grads)+1, linewidth=1, color="k" )
         plt.xticks(range(0,len(all_grads), 1), layers, rotation="vertical")
